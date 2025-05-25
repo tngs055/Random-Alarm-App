@@ -11,6 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <style>
+        /* General body styling for centering and background */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f0f4f8; /* Light blue-gray background */
@@ -22,6 +23,7 @@
             padding: 20px;
             box-sizing: border-box;
         }
+        /* Container styling for the app card */
         .container {
             background-color: #ffffff; /* White card background */
             border-radius: 1.5rem; /* More rounded corners */
@@ -34,6 +36,7 @@
             flex-direction: column;
             gap: 1.5rem;
         }
+        /* Styling for all input fields and select dropdowns */
         input[type="time"], input[type="date"], input[type="text"], select {
             padding: 0.75rem 1rem;
             border: 1px solid #cbd5e1; /* Light gray border */
@@ -43,11 +46,13 @@
             box-sizing: border-box;
             transition: border-color 0.2s;
         }
+        /* Focus styling for input fields */
         input[type="time"]:focus, input[type="date"]:focus, input[type="text"]:focus, select:focus {
             outline: none;
             border-color: #6366f1; /* Indigo focus border */
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Soft focus ring */
         }
+        /* Styling for buttons */
         button {
             background-color: #6366f1; /* Indigo button */
             color: white;
@@ -60,14 +65,17 @@
             border: none;
             box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
         }
+        /* Hover effect for buttons */
         button:hover {
             background-color: #4f46e5; /* Darker indigo on hover */
             transform: translateY(-2px);
         }
+        /* Active (click) effect for buttons */
         button:active {
             transform: translateY(0);
             box-shadow: 0 2px 5px rgba(99, 102, 241, 0.3);
         }
+        /* Styling for the alarm list container */
         .alarm-list {
             text-align: left;
             margin-top: 1.5rem;
@@ -75,6 +83,7 @@
             overflow-y: auto;
             padding-right: 10px; /* For scrollbar space */
         }
+        /* Styling for individual alarm items in the list */
         .alarm-item {
             background-color: #f8fafc; /* Lighter background for list items */
             border: 1px solid #e2e8f0; /* Light border */
@@ -87,12 +96,14 @@
             font-size: 0.95rem;
             color: #334155; /* Darker text */
         }
+        /* Styling for triggered alarm items */
         .alarm-item.triggered {
             background-color: #fef2f2; /* Light red for triggered alarms */
             border-color: #ef4444; /* Red border */
             color: #dc2626; /* Red text */
             font-weight: 600;
         }
+        /* Styling for the delete alarm button */
         .delete-alarm-btn {
             background: none;
             border: none;
@@ -101,9 +112,11 @@
             cursor: pointer;
             transition: color 0.2s;
         }
+        /* Hover effect for delete button */
         .delete-alarm-btn:hover {
             color: #ef4444; /* Red on hover */
         }
+        /* Styling for the custom message box (replaces alert()) */
         #messageBox {
             background-color: #fff;
             border: 1px solid #ccc;
@@ -119,6 +132,7 @@
             max-width: 300px;
             text-align: center;
         }
+        /* Styling for the OK button in the message box */
         #messageBox button {
             margin-top: 15px;
             padding: 8px 15px;
@@ -128,8 +142,53 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        /* Hover effect for message box button */
         #messageBox button:hover {
             background-color: #4f46e5;
+        }
+        /* Styling for the randomness toggle switch */
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.75rem 0;
+        }
+        .toggle-switch input[type="checkbox"] {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+        }
+        .toggle-switch label {
+            cursor: pointer;
+            text-indent: -9999px;
+            width: 50px;
+            height: 25px;
+            background: #cbd5e1; /* Light gray for off state */
+            display: block;
+            border-radius: 100px;
+            position: relative;
+        }
+        .toggle-switch label:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 21px;
+            height: 21px;
+            background: #fff;
+            border-radius: 90px;
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked + label {
+            background: #6366f1; /* Indigo for on state */
+        }
+        .toggle-switch input:checked + label:after {
+            left: calc(100% - 2px);
+            transform: translateX(-100%);
+        }
+        .toggle-switch label:active:after {
+            width: 30px;
         }
     </style>
 </head>
@@ -148,6 +207,12 @@
             <label for="alarmTime" class="text-gray-700 text-lg font-medium">Set Alarm Time:</label>
             <input type="time" id="alarmTime" class="w-full" value="07:00">
 
+            <div class="toggle-switch">
+                <span class="text-gray-700 text-lg font-medium">Enable Randomness:</span>
+                <input type="checkbox" id="enableRandomness" checked>
+                <label for="enableRandomness">Toggle</label>
+            </div>
+
             <label for="randomness" class="text-gray-700 text-lg font-medium">Randomness Window:</label>
             <select id="randomness" class="w-full">
                 <option value="0m">No Randomness</option>
@@ -161,6 +226,13 @@
                 <option value="8h">± 8 hours</option>
                 <option value="1d">± 1 day</option>
                 <option value="2d">± 2 days</option>
+            </select>
+
+            <label for="alarmSound" class="text-gray-700 text-lg font-medium">Alarm Sound:</label>
+            <select id="alarmSound" class="w-full">
+                <option value="bell">Bell</option>
+                <option value="chime">Chime</option>
+                <option value="synthPulse">Synth Pulse</option>
             </select>
 
             <label for="alarmNote" class="text-gray-700 text-lg font-medium">Alarm Note (Optional):</label>
@@ -181,15 +253,20 @@
     </div>
 
     <script>
-        // Initialize Tone.js for audio context
-        const synth = new Tone.Synth().toDestination();
-        let alarmSoundPlaying = false; // Flag to prevent multiple sounds
+        // Initialize Tone.js synthesizers for different alarm sounds
+        const synth = new Tone.Synth().toDestination(); // Basic synth for 'bell'
+        const metalSynth = new Tone.MetalSynth().toDestination(); // For 'chime' sound
+        const pluckySynth = new Tone.PluckSynth().toDestination(); // For 'synthPulse' sound
 
-        // DOM Elements
+        let alarmSoundPlaying = false; // Flag to prevent multiple alarm sounds from playing simultaneously
+
+        // Get references to DOM elements
         const currentTimeDisplay = document.getElementById('currentTime');
         const alarmDateInput = document.getElementById('alarmDate');
         const alarmTimeInput = document.getElementById('alarmTime');
         const randomnessSelect = document.getElementById('randomness');
+        const enableRandomnessToggle = document.getElementById('enableRandomness'); // New: Randomness toggle
+        const alarmSoundSelect = document.getElementById('alarmSound');
         const alarmNoteInput = document.getElementById('alarmNote');
         const setAlarmBtn = document.getElementById('setAlarmBtn');
         const alarmList = document.getElementById('alarmList');
@@ -198,11 +275,11 @@
         const messageText = document.getElementById('messageText');
         const messageBoxCloseBtn = document.getElementById('messageBoxCloseBtn');
 
-        // Array to store active alarms
+        // Array to store all active alarm objects
         let alarms = [];
 
         /**
-         * Sets the default date for the alarmDateInput to today.
+         * Sets the default value of the alarm date input to the current date.
          */
         function setDefaultDate() {
             const today = new Date();
@@ -213,21 +290,21 @@
         }
 
         /**
-         * Shows a custom message box instead of alert().
-         * @param {string} message - The message to display.
+         * Displays a custom message box to the user.
+         * @param {string} message - The message text to display.
          */
         function showMessageBox(message) {
             messageText.textContent = message;
             messageBox.style.display = 'block';
         }
 
-        // Close message box when OK is clicked
+        // Event listener to close the custom message box
         messageBoxCloseBtn.addEventListener('click', () => {
             messageBox.style.display = 'none';
         });
 
         /**
-         * Updates the current time display every second.
+         * Updates the current time displayed on the app every second.
          */
         function updateCurrentTime() {
             const now = new Date();
@@ -238,34 +315,43 @@
         }
 
         /**
-         * Plays a simple alarm sound using Tone.js.
+         * Plays the selected alarm sound using Tone.js.
+         * Prevents multiple sounds from playing simultaneously.
+         * @param {string} soundType - The type of sound to play ('bell', 'chime', 'synthPulse').
          */
-        function playAlarmSound() {
+        function playAlarmSound(soundType) {
             if (!alarmSoundPlaying) {
                 alarmSoundPlaying = true;
-                // Start the audio context if it's suspended (common in browsers)
+                // Resume audio context if it's suspended (common in browsers for user interaction)
                 if (Tone.context.state !== 'running') {
                     Tone.context.resume();
                 }
-                // Play a simple C4 note for 1 second
-                synth.triggerAttackRelease("C4", "1s");
-                // Stop the sound after a short duration
+
+                // Trigger different sounds based on selection
+                switch (soundType) {
+                    case 'bell':
+                        synth.triggerAttackRelease("C5", "0.8s"); // A higher, clearer bell sound
+                        break;
+                    case 'chime':
+                        metalSynth.triggerAttackRelease("G4", "1s", "+0.1"); // Chime sound
+                        break;
+                    case 'synthPulse':
+                        pluckySynth.triggerAttackRelease("A4", "0.5s"); // Short, plucky synth sound
+                        break;
+                    default:
+                        synth.triggerAttackRelease("C4", "1s"); // Default sound if none specified
+                        break;
+                }
+
+                // Reset the flag after a short delay to allow sound to play
                 setTimeout(() => {
-                    synth.triggerRelease();
                     alarmSoundPlaying = false;
-                }, 1000); // Play for 1 second
+                }, 1200); // Allow slightly more time for sound to fade out
             }
         }
 
         /**
-         * Stops the alarm sound. (Currently handled by triggerAttackRelease duration)
-         */
-        function stopAlarmSound() {
-            // If more complex sound loops are added, this function would stop them.
-        }
-
-        /**
-         * Renders the list of active alarms in the UI.
+         * Renders (or re-renders) the list of active alarms in the UI.
          */
         function renderAlarms() {
             alarmList.innerHTML = '<h2 class="text-xl font-semibold text-gray-800 mb-3">Active Alarms:</h2>';
@@ -277,30 +363,42 @@
                 alarms.forEach((alarm, index) => {
                     const alarmItem = document.createElement('div');
                     alarmItem.classList.add('alarm-item');
+                    // Add 'triggered' class for styling if alarm has already gone off
                     if (alarm.triggered) {
                         alarmItem.classList.add('triggered');
                     }
 
-                    // Format the selected date for display
+                    // Format the selected date for display in the list
                     const displayDate = new Date(alarm.selectedDate).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
 
-                    // Display randomness value with unit
-                    let randomnessDisplay = `±${alarm.randomnessAmount}`;
-                    if (alarm.randomnessUnit === 'm') randomnessDisplay += ' min';
-                    else if (alarm.randomnessUnit === 'h') randomnessDisplay += ' hour';
-                    else if (alarm.randomnessUnit === 'd') randomnessDisplay += ' day';
-                    if (alarm.randomnessAmount > 1 && alarm.randomnessUnit !== 'm') randomnessDisplay += 's'; // Pluralize hours/days
+                    // Construct the randomness display string (e.g., "± 10 min", "± 1 hour", "± 2 days")
+                    let randomnessDisplay = '';
+                    if (alarm.randomnessEnabled) {
+                        randomnessDisplay = ` (±${alarm.randomnessAmount}`;
+                        if (alarm.randomnessUnit === 'm') randomnessDisplay += ' min)';
+                        else if (alarm.randomnessUnit === 'h') randomnessDisplay += ' hour)';
+                        else if (alarm.randomnessUnit === 'd') randomnessDisplay += ' day)';
+                        if (alarm.randomnessAmount > 1 && alarm.randomnessUnit !== 'm') randomnessDisplay = randomnessDisplay.replace(')', 's)'); // Pluralize hours/days
+                    } else {
+                        randomnessDisplay = ' (No Randomness)';
+                    }
+                    
 
-                    // Display note if it exists
+                    // Conditional display for alarm note
                     const noteDisplay = alarm.note ? `<br><span class="text-sm text-gray-700 italic">Note: ${alarm.note}</span>` : '';
+                    
+                    // Conditional display for sound type
+                    const soundTypeDisplay = alarm.soundType ? `<br><span class="text-xs text-gray-400">Sound: ${alarm.soundType}</span>` : '';
 
+                    // Populate the alarm item's HTML
                     alarmItem.innerHTML = `
                         <div>
                             <span class="font-bold">${alarm.originalTime}</span>
-                            <span class="text-gray-600"> (${randomnessDisplay})</span>
+                            <span class="text-gray-600">${randomnessDisplay}</span>
                             <br>
                             <span class="text-sm text-gray-500">Scheduled for: ${displayDate}</span>
                             ${noteDisplay}
+                            ${soundTypeDisplay}
                         </div>
                         <button class="delete-alarm-btn" data-index="${index}">
                             &times; </button>
@@ -311,81 +409,97 @@
         }
 
         /**
-         * Adds a new alarm based on user input.
+         * Event listener for the "Set Random Alarm" button click.
+         * Gathers input, calculates random trigger time, and adds the new alarm.
          */
         setAlarmBtn.addEventListener('click', () => {
             const selectedDate = alarmDateInput.value; // e.g., "2025-05-27"
             const originalTime = alarmTimeInput.value; // e.g., "07:30"
             const randomnessValue = randomnessSelect.value; // e.g., "10m", "1h", "2d"
-            const alarmNote = alarmNoteInput.value.trim();
+            const isRandomnessEnabled = enableRandomnessToggle.checked; // New: Get randomness toggle state
+            const alarmSound = alarmSoundSelect.value; // Get selected alarm sound type
+            const alarmNote = alarmNoteInput.value.trim(); // Get alarm note, trim whitespace
 
+            // Input validation
             if (!selectedDate || !originalTime) {
                 showMessageBox('Please select both a date and an alarm time.');
                 return;
             }
 
-            // Parse randomness value and unit
+            // Parse randomness amount and unit from the selected value
             const randomnessAmount = parseInt(randomnessValue.slice(0, -1));
             const randomnessUnit = randomnessValue.slice(-1); // 'm', 'h', 'd'
 
+            // Parse selected date and time
             const [year, month, day] = selectedDate.split('-').map(Number);
             const [hours, minutes] = originalTime.split(':').map(Number);
 
-            // Create a Date object for the original alarm time on the selected date
+            // Create a base Date object for the original alarm time on the selected date
             // Month is 0-indexed in JavaScript Date (January is 0)
             let baseAlarmDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
 
-            // Check if the selected date and time is in the past relative to now
+            // Check if the selected date and time is in the past relative to the current time
             const now = new Date();
             if (baseAlarmDate.getTime() < now.getTime()) {
                 showMessageBox('Cannot set an alarm for a time in the past. Please select a future date/time.');
                 return;
             }
 
-            // Calculate random offset in milliseconds based on unit
+            // Calculate a random offset based on the chosen randomness amount and unit
             let randomOffsetMs = 0;
-            let randomValue = Math.floor(Math.random() * (2 * randomnessAmount + 1)) - randomnessAmount; // -amount to +amount
+            if (isRandomnessEnabled) { // Only apply randomness if toggle is checked
+                // Generates a random value within the range [-randomnessAmount, +randomnessAmount]
+                let randomValue = Math.floor(Math.random() * (2 * randomnessAmount + 1)) - randomnessAmount;
 
-            switch (randomnessUnit) {
-                case 'm':
-                    randomOffsetMs = randomValue * 60 * 1000; // minutes to milliseconds
-                    break;
-                case 'h':
-                    randomOffsetMs = randomValue * 60 * 60 * 1000; // hours to milliseconds
-                    break;
-                case 'd':
-                    randomOffsetMs = randomValue * 24 * 60 * 60 * 1000; // days to milliseconds
-                    break;
+                // Convert random value to milliseconds based on its unit
+                switch (randomnessUnit) {
+                    case 'm': // Minutes
+                        randomOffsetMs = randomValue * 60 * 1000;
+                        break;
+                    case 'h': // Hours
+                        randomOffsetMs = randomValue * 60 * 60 * 1000;
+                        break;
+                    case 'd': // Days
+                        randomOffsetMs = randomValue * 24 * 60 * 60 * 1000;
+                        break;
+                }
             }
 
-            // Calculate the actual scheduled timestamp
+            // Calculate the actual scheduled timestamp by adding the random offset to the base time
             const scheduledTimestamp = baseAlarmDate.getTime() + randomOffsetMs;
 
+            // Create a new alarm object
             const newAlarm = {
-                id: Date.now(), // Unique ID for the alarm
-                selectedDate: selectedDate, // Store the selected date string
-                originalTime: originalTime,
-                randomnessAmount: randomnessAmount, // Store parsed amount
-                randomnessUnit: randomnessUnit, // Store parsed unit
-                scheduledTimestamp: scheduledTimestamp, // This is the actual random trigger time
-                triggered: false,
-                note: alarmNote
+                id: Date.now(), // Unique ID for the alarm (timestamp of creation)
+                selectedDate: selectedDate, // Store the selected date string (e.g., "2025-05-27")
+                originalTime: originalTime, // Store the original time string (e.g., "07:30")
+                randomnessAmount: randomnessAmount, // Store parsed randomness amount
+                randomnessUnit: randomnessUnit, // Store parsed randomness unit
+                randomnessEnabled: isRandomnessEnabled, // New: Store randomness state
+                scheduledTimestamp: scheduledTimestamp, // The actual, randomized timestamp for triggering
+                triggered: false, // Flag to track if the alarm has gone off
+                note: alarmNote, // Store the optional note
+                soundType: alarmSound // Store the selected sound type
             };
 
+            // Add the new alarm to the array and sort by scheduled time
             alarms.push(newAlarm);
-            alarms.sort((a, b) => a.scheduledTimestamp - b.scheduledTimestamp); // Sort by scheduled time
-            renderAlarms();
-            alarmNoteInput.value = ''; // Clear the note input after setting alarm
+            alarms.sort((a, b) => a.scheduledTimestamp - b.scheduledTimestamp);
+            
+            renderAlarms(); // Update the UI to show the new alarm
+            alarmNoteInput.value = ''; // Clear the note input field
 
-            // Format the selected date for the confirmation message
+            // Prepare confirmation message for the user
             const confirmationDateDisplay = new Date(selectedDate).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
-            let randomnessConfirmation = `±${randomnessAmount}`;
-            if (randomnessUnit === 'm') randomnessConfirmation += ' min';
-            else if (randomnessUnit === 'h') randomnessConfirmation += ' hour';
-            else if (randomnessUnit === 'd') randomnessConfirmation += ' day';
-            if (randomnessAmount > 1 && randomnessUnit !== 'm') randomnessConfirmation += 's'; // Pluralize hours/days
+            let randomnessConfirmation = '';
+            if (isRandomnessEnabled) {
+                randomnessConfirmation = ` (${randomnessSelect.options[randomnessSelect.selectedIndex].text})`;
+            } else {
+                randomnessConfirmation = ' (No Randomness)';
+            }
+            
 
-            let message = `Alarm set for ${confirmationDateDisplay} at ${originalTime} (${randomnessConfirmation}).`;
+            let message = `Alarm set for ${confirmationDateDisplay} at ${originalTime}${randomnessConfirmation}. Sound: ${alarmSoundSelect.options[alarmSoundSelect.selectedIndex].text}.`;
             if (alarmNote) {
                 message += `\nNote: "${alarmNote}"`;
             }
@@ -393,32 +507,52 @@
         });
 
         /**
-         * Handles deleting an alarm from the list.
+         * Handles changes to the randomness toggle.
+         * Disables/enables the randomness dropdown accordingly.
+         */
+        enableRandomnessToggle.addEventListener('change', () => {
+            randomnessSelect.disabled = !enableRandomnessToggle.checked;
+        });
+
+        /**
+         * Handles changes to the alarm sound selection.
+         * Plays a preview of the selected sound.
+         */
+        alarmSoundSelect.addEventListener('change', (event) => {
+            playAlarmSound(event.target.value);
+        });
+
+
+        /**
+         * Event listener for clicks within the alarm list.
+         * Handles deleting alarms when the 'x' button is clicked.
          */
         alarmList.addEventListener('click', (event) => {
             if (event.target.classList.contains('delete-alarm-btn')) {
                 const indexToDelete = parseInt(event.target.dataset.index);
                 if (!isNaN(indexToDelete) && indexToDelete >= 0 && indexToDelete < alarms.length) {
-                    alarms.splice(indexToDelete, 1);
-                    renderAlarms();
+                    alarms.splice(indexToDelete, 1); // Remove alarm from array
+                    renderAlarms(); // Re-render the list
                 }
             }
         });
 
         /**
-         * Checks for triggered alarms every second.
+         * Periodically checks if any alarms have been triggered.
+         * Runs every second.
          */
         function checkAlarms() {
             const now = new Date();
             const currentTimestamp = now.getTime();
 
             alarms.forEach(alarm => {
+                // Check if alarm hasn't been triggered yet and its scheduled time has passed
                 if (!alarm.triggered && currentTimestamp >= alarm.scheduledTimestamp) {
-                    playAlarmSound();
-                    alarm.triggered = true;
-                    renderAlarms(); // Re-render to show triggered state
+                    playAlarmSound(alarm.soundType); // Play the specific sound for this alarm
+                    alarm.triggered = true; // Mark as triggered
+                    renderAlarms(); // Update UI to show triggered state
 
-                    // When triggered, show the exact random time and date
+                    // Prepare alarm notification message
                     let message = `Alarm! It's ${new Date(alarm.scheduledTimestamp).toLocaleTimeString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} (originally set for ${new Date(alarm.selectedDate).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })} at ${alarm.originalTime})`;
                     if (alarm.note) {
                         message += `\nNote: "${alarm.note}"`;
@@ -428,20 +562,23 @@
             });
         }
 
-        // Initial render and set up intervals
+        // Initial setup when the window loads
         window.onload = function() {
-            setDefaultDate(); // Set default date to today
-            updateCurrentTime(); // Call once immediately
-            setInterval(updateCurrentTime, 1000); // Update time every second
-            setInterval(checkAlarms, 1000); // Check alarms every second
-            renderAlarms(); // Initial render of the alarm list
+            setDefaultDate(); // Set default date input value
+            updateCurrentTime(); // Display current time immediately
+            setInterval(updateCurrentTime, 1000); // Update current time every second
+            setInterval(checkAlarms, 1000); // Check for triggered alarms every second
+            renderAlarms(); // Initial render of the alarm list (will show "No alarms set yet")
+            // Initialize randomness toggle state
+            randomnessSelect.disabled = !enableRandomnessToggle.checked;
         };
     </script>
 
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
+                // Changed from '/service-worker.js' to './service-worker.js'
+                navigator.serviceWorker.register('./service-worker.js') 
                     .then(registration => {
                         console.log('Service Worker registered:', registration);
                     })
